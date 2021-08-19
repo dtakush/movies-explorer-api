@@ -1,28 +1,23 @@
 const jwt = require('jsonwebtoken');
 
+// Импорт ошибок
+const errorMessage = require('../utils/constants');
 const Unauthorized = require('../errors/Unauthorized');
 
 const { JWT_SECRET = 'super-strong-secret' } = process.env;
 
-// eslint-disable-next-line
 module.exports = (req, res, next) => {
-  const { authorization } = req.headers;
-  // eslint-disable-next-line
-  console.log(authorization);
-
-  if (!authorization || !authorization.startsWith('Bearer ')) {
-    throw new Unauthorized('Необходима авторизация');
+  const { jwt: token } = req.cookies;
+  if (!token) {
+    throw new Unauthorized(errorMessage.unauthorized);
   }
 
-  const token = authorization.replace('Bearer ', '');
   let payload;
-
   try {
     payload = jwt.verify(token, JWT_SECRET);
   } catch (err) {
-    throw new Unauthorized('Необходима авторизация');
+    throw new Unauthorized(`${errorMessage.unauthorized} из-за ${err.message}`);
   }
-
   req.user = payload;
   next();
 };

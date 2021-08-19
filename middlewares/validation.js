@@ -2,8 +2,8 @@ const { celebrate, Joi } = require('celebrate');
 
 const userValidation = celebrate({
   body: Joi.object().keys({
-    name: Joi.string().min(2).max(30),
-    email: Joi.string().email(),
+    name: Joi.string().required().min(2).max(30),
+    email: Joi.string().required().email(),
   }),
 });
 
@@ -17,8 +17,7 @@ const movieValidation = celebrate({
     image: Joi.string().required().min(2).pattern(/(http|https):\/\/\w*\S*\./),
     trailer: Joi.string().required().min(2).pattern(/(http|https):\/\/\w*\S*\./),
     thumbnail: Joi.string().required().min(2).pattern(/(http|https):\/\/\w*\S*\./),
-    owner: Joi.string().required(),
-    movieId: Joi.string().required(),
+    movieId: Joi.number().required(),
     nameRU: Joi.string().required(),
     nameEN: Joi.string().required(),
   }),
@@ -26,7 +25,7 @@ const movieValidation = celebrate({
 
 const movieIdValidation = celebrate({
   params: Joi.object().keys({
-    movieId: Joi.string().length(24).hex(),
+    movieId: Joi.string(),
   }),
 });
 

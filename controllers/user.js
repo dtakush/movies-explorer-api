@@ -2,9 +2,10 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 
-const { JWT_SECRET = 'super-strong-secret' } = process.env;
+const { JWT_SECRET } = process.env;
 
 // Ошибки
+const errorMessage = require('../utils/constants');
 const NotFound = require('../errors/NotFound');
 const BadRequest = require('../errors/BadRequest');
 const Conflict = require('../errors/Conflict');
@@ -12,16 +13,15 @@ const Unauthorized = require('../errors/Unauthorized');
 
 // Запрос информации о пользователе
 module.exports.getUserInfo = (req, res, next) => {
-  User.findOne({ _id: req.user._id })
+  const id = req.user._id;
+  User.findById(id)
     .orFail(new Error('NotValidId'))
     .then((user) => {
-      // eslint-disable-next-line
-      console.log(user);
-      res.status(200).send(user);
+      res.send(user);
     })
     .catch((err) => {
       if (err.kind === 'ObjectId') {
-        throw new NotFound('Пользователя с таким Id не существует');
+        throw new NotFound(errorMessage.noUserId);
       }
     })
     .catch(next);
@@ -40,9 +40,9 @@ module.exports.updateProfile = (req, res, next) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.message === 'NotValidId') {
-        throw new NotFound('Пользователь по указанному Id не найден');
+        throw new NotFound(errorMessage.noUserId);
       } else if (err.name === 'CastError') {
-        throw new BadRequest('Переданы некорректные данные при обновлении профиля');
+        throw new BadRequest(errorMessage.incorrectUserInfo);
       }
     })
     .catch(next);
@@ -64,9 +64,9 @@ module.exports.createUser = (req, res, next) => {
       }))
     .catch((err) => {
       if (err.name === 'MongoError' && err.code === 11000) {
-        throw new Conflict('При регистрации указан email, который уже существует');
+        throw new Conflict(errorMessage.existingEmail);
       } else if (err.name === 'CastError') {
-        throw new BadRequest('Переданы некорректные данные при создании пользователя');
+        throw new BadRequest(errorMessage.incorrectUserInfo);
       }
     })
     .catch(next);
@@ -74,8 +74,7 @@ module.exports.createUser = (req, res, next) => {
 
 // Вход
 module.exports.login = (req, res, next) => {
-  // eslint-disable-next-line
-  const { email, password } = req.body;
+  const { email } = req.body;
 
   User.findOne({ email }).select('+password')
     .then((user) => {
@@ -84,10 +83,23 @@ module.exports.login = (req, res, next) => {
         JWT_SECRET,
         { expiresIn: '7d' },
       );
-      return res.send({ token });
+      return res
+        .cookie('jwt', token, {
+          maxAge: 604800000,
+          httpOnly: true,
+          sameSite: true,
+        })
+        .send({ message: errorMessage.successfulLogin });
     })
     .catch(() => {
-      throw new Unauthorized('Неверный логин либо пароль');
+      throw new Unauthorized(errorMessage.incorrectLogin);
     })
     .catch(next);
+};
+
+// Выход из аккаунта
+// eslint-disable-next-line
+module.exports.signout = (req, res) => {
+  res.clearCookie('jwt', { httpOnly: true });
+  res.status(200).json({ message: 'OK' });
 };

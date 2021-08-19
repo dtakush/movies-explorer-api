@@ -1,62 +1,59 @@
 require('dotenv').config();
 const express = require('express');
+const helmet = require('helmet');
+const mongoose = require('mongoose');
+const cors = require('cors');
+const cookieParser = require('cookie-parser');
+const { errors } = require('celebrate');
 
 const app = express();
 
-const mongoose = require('mongoose');
-const helmet = require('helmet');
-const { errors } = require('celebrate');
-// const cors = require('cors');
+const { PORT = 3000, MONGO_URL } = process.env;
 
-const { PORT = 3000 } = process.env;
-
-// Импорт контроллеров
-const { login, createUser } = require('./controllers/user');
+// Импорт роутов
+const routes = require('./routes/index');
 
 // Импорт мидлвар
 const { requestLogger, errorLogger } = require('./middlewares/logger');
-const { loginValidation, signupValidation } = require('./middlewares/validation');
 const midlewareErrors = require('./middlewares/error');
-const auth = require('./middlewares/auth');
 
-// Импорт роутов
-const userRouter = require('./routes/user');
-const movieRouter = require('./routes/movie');
+const limiter = require('./utils/rateLimiter');
 
-/* const corsOptions = {
-  origin: 'https://dtakush.mesto.students.nomoredomains.club',
+const corsOptions = {
+  origin: '*',
   credentials: true,
-}; */
+  optionsSuccessStatus: 204,
+};
 
 app.use(helmet());
-// app.use(cors(corsOptions));
+app.use(cors(corsOptions));
 app.disable('x-powered-by');
+app.use(cookieParser());
 app.use(express.json());
 
-mongoose.connect('mongodb://localhost:27017/bitfilmsdb', {
+mongoose.connect(MONGO_URL, {
   useNewUrlParser: true,
   useCreateIndex: true,
   useFindAndModify: false,
   useUnifiedTopology: true,
 });
 
-// подключаем логгер запросов
+// логгер запросов
 app.use(requestLogger);
 
+// rate limiter
+app.use(limiter);
+
 // Роуты
-app.post('/signup', signupValidation, createUser);
-app.post('/signin', loginValidation, login);
+app.use(routes);
 
-app.use(auth);
-
-app.use('/users', userRouter);
-app.use('/movies', movieRouter);
-
-app.use(errorLogger); // подключаем логгер ошибок
-app.use(errors()); // ошибки celebrate
-app.use(midlewareErrors); // централизованная обработка ошибок
+// логгер ошибок
+app.use(errorLogger);
+// ошибки celebrate
+app.use(errors());
+// централизованная обработка ошибок
+app.use(midlewareErrors);
 
 app.listen(PORT, () => {
-  // eslint-disable-next-line
-  console.log(`Порт 3000`);
+  console.log(PORT);
 });

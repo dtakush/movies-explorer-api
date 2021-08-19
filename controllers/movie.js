@@ -3,6 +3,7 @@ require('dotenv').config();
 const Movie = require('../models/movie');
 
 // Ошибки
+const errorMessage = require('../utils/constants');
 const BadRequest = require('../errors/BadRequest');
 const Forbidden = require('../errors/Forbidden');
 const NotFound = require('../errors/NotFound');
@@ -13,7 +14,7 @@ module.exports.getMovies = (req, res, next) => {
     .then((movies) => res.status(200).send(movies))
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new BadRequest('Переданы некорректные данные при запросе фильмов');
+        throw new BadRequest(errorMessage.incorrectFilmInfo);
       }
     })
     .catch(next);
@@ -21,7 +22,7 @@ module.exports.getMovies = (req, res, next) => {
 
 // Создание фильма
 module.exports.postMovie = (req, res, next) => {
-  const id = req.user._id;
+  // console.log(req.user);
   const {
     country,
     director,
@@ -36,6 +37,8 @@ module.exports.postMovie = (req, res, next) => {
     movieId,
   } = req.body;
 
+  const owner = req.user._id;
+
   Movie.create({
     country,
     director,
@@ -48,12 +51,12 @@ module.exports.postMovie = (req, res, next) => {
     nameEN,
     thumbnail,
     movieId,
-    owner: id,
+    owner,
   })
-    .then((movie) => res.status(200).send(movie))
+    .then((movie) => res.send(movie))
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new BadRequest('Переданы некорректные данные при создании фильма');
+        throw new BadRequest(errorMessage.incorrectFilmInfo);
       }
     })
     .catch(next);
@@ -63,21 +66,22 @@ module.exports.postMovie = (req, res, next) => {
 module.exports.deleteMovie = (req, res, next) => {
   Movie.findById(req.params.movieId)
     .orFail(new Error('NotValidId'))
-    // eslint-disable-next-line consistent-return
     .then((movie) => {
       if (movie.owner._id.toString() === req.user._id) {
-        Movie.findByIdAndRemove(req.params.movieId)
-          .then(() => res.send(movie))
-          .catch(next);
+        movie.remove()
+          .then(() => {
+            res.send({ message: 'Фильм удален' });
+          })
+          .catch((err) => next(err));
       } else {
-        throw new Forbidden('У вас нет прав на удаление этого фильма');
+        throw new Forbidden(errorMessage.noRightsToDelete);
       }
     })
     .catch((err) => {
       if (err.message === 'NotValidId') {
-        throw new NotFound('Фильм с указанным Id не найдена');
+        throw new NotFound(errorMessage.incorrectFilmId);
       } else if (err.name === 'CastError') {
-        throw new BadRequest('Переданы некорректные данные');
+        throw new BadRequest(errorMessage.incorrectFilmInfo);
       }
     })
     .catch(next);
