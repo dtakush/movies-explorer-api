@@ -2,10 +2,10 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 
-const { JWT_SECRET } = process.env;
+const { CURRENT_JWT_SECRET } = require('../utils/envConstants');
 
 // Ошибки
-const errorMessage = require('../utils/constants');
+const errorMessages = require('../utils/constants');
 const NotFound = require('../errors/NotFound');
 const BadRequest = require('../errors/BadRequest');
 const Conflict = require('../errors/Conflict');
@@ -21,7 +21,7 @@ module.exports.getUserInfo = (req, res, next) => {
     })
     .catch((err) => {
       if (err.kind === 'ObjectId') {
-        throw new NotFound(errorMessage.noUserId);
+        throw new NotFound(errorMessages.noUserId);
       }
     })
     .catch(next);
@@ -40,9 +40,9 @@ module.exports.updateProfile = (req, res, next) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.message === 'NotValidId') {
-        throw new NotFound(errorMessage.noUserId);
+        throw new NotFound(errorMessages.noUserId);
       } else if (err.name === 'CastError') {
-        throw new BadRequest(errorMessage.incorrectUserInfo);
+        throw new BadRequest(errorMessages.incorrectUserInfo);
       }
     })
     .catch(next);
@@ -64,9 +64,9 @@ module.exports.createUser = (req, res, next) => {
       }))
     .catch((err) => {
       if (err.name === 'MongoError' && err.code === 11000) {
-        throw new Conflict(errorMessage.existingEmail);
+        throw new Conflict(errorMessages.existingEmail);
       } else if (err.name === 'CastError') {
-        throw new BadRequest(errorMessage.incorrectUserInfo);
+        throw new BadRequest(errorMessages.incorrectUserInfo);
       }
     })
     .catch(next);
@@ -80,7 +80,7 @@ module.exports.login = (req, res, next) => {
     .then((user) => {
       const token = jwt.sign(
         { _id: user._id },
-        JWT_SECRET,
+        CURRENT_JWT_SECRET,
         { expiresIn: '7d' },
       );
       return res
@@ -89,10 +89,10 @@ module.exports.login = (req, res, next) => {
           httpOnly: true,
           sameSite: true,
         })
-        .send({ message: errorMessage.successfulLogin });
+        .send({ message: errorMessages.successfulLogin });
     })
     .catch(() => {
-      throw new Unauthorized(errorMessage.incorrectLogin);
+      throw new Unauthorized(errorMessages.incorrectLogin);
     })
     .catch(next);
 };

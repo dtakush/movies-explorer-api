@@ -1,4 +1,3 @@
-require('dotenv').config();
 const express = require('express');
 const helmet = require('helmet');
 const mongoose = require('mongoose');
@@ -6,9 +5,9 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const { errors } = require('celebrate');
 
-const app = express();
+const { CURRENT_PORT, CURRENT_DB } = require('./utils/envConstants');
 
-const { PORT = 3000, MONGO_URL } = process.env;
+const app = express();
 
 // Импорт роутов
 const routes = require('./routes/index');
@@ -31,7 +30,7 @@ app.disable('x-powered-by');
 app.use(cookieParser());
 app.use(express.json());
 
-mongoose.connect(MONGO_URL, {
+mongoose.connect(CURRENT_DB, {
   useNewUrlParser: true,
   useCreateIndex: true,
   useFindAndModify: false,
@@ -54,6 +53,6 @@ app.use(errors());
 // централизованная обработка ошибок
 app.use(midlewareErrors);
 
-app.listen(PORT, () => {
-  console.log(PORT);
+app.listen(CURRENT_PORT, () => {
+  console.log(CURRENT_PORT);
 });

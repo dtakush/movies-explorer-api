@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const errorMessages = {
   noUrl: 'Такого адреса не существует',
   unauthorized: 'В доступе на страницу отказано',
