@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 
-const { CURRENT_JWT_SECRET } = require('../utils/envConstants');
+const { JWT_SECRET = 'super-strong-secret' } = process.env;
 
 // Ошибки
 const errorMessages = require('../utils/constants');
@@ -80,7 +80,7 @@ module.exports.login = (req, res, next) => {
     .then((user) => {
       const token = jwt.sign(
         { _id: user._id },
-        CURRENT_JWT_SECRET,
+        JWT_SECRET,
         { expiresIn: '7d' },
       );
       return res

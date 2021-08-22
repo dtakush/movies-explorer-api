@@ -5,7 +5,10 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const { errors } = require('celebrate');
 
-const { CURRENT_PORT, CURRENT_DB } = require('./utils/envConstants');
+const {
+  PORT = 3000,
+  MONGO_URL = 'mongodb://localhost:27017/bitfilmsdb',
+} = process.env;
 
 const app = express();
 
@@ -30,7 +33,7 @@ app.disable('x-powered-by');
 app.use(cookieParser());
 app.use(express.json());
 
-mongoose.connect(CURRENT_DB, {
+mongoose.connect(MONGO_URL, {
   useNewUrlParser: true,
   useCreateIndex: true,
   useFindAndModify: false,
@@ -53,6 +56,6 @@ app.use(errors());
 // централизованная обработка ошибок
 app.use(midlewareErrors);
 
-app.listen(CURRENT_PORT, () => {
-  console.log(CURRENT_PORT);
+app.listen(PORT, () => {
+  console.log(PORT);
 });
