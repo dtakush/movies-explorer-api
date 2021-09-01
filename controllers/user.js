@@ -22,6 +22,8 @@ module.exports.getUserInfo = (req, res, next) => {
     .catch((err) => {
       if (err.kind === 'ObjectId') {
         throw new NotFound(errorMessages.noUserId);
+      } else {
+        throw err;
       }
     })
     .catch(next);
@@ -43,6 +45,10 @@ module.exports.updateProfile = (req, res, next) => {
         throw new NotFound(errorMessages.noUserId);
       } else if (err.name === 'CastError') {
         throw new BadRequest(errorMessages.incorrectUserInfo);
+      } else if (err.name === 'MongoError' && err.code === 11000) {
+        throw new Conflict(errorMessages.existingEmail);
+      } else {
+        throw err;
       }
     })
     .catch(next);
@@ -67,6 +73,8 @@ module.exports.createUser = (req, res, next) => {
         throw new Conflict(errorMessages.existingEmail);
       } else if (err.name === 'CastError') {
         throw new BadRequest(errorMessages.incorrectUserInfo);
+      } else {
+        throw err;
       }
     })
     .catch(next);

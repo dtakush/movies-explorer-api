@@ -1,5 +1,3 @@
-require('dotenv').config();
-
 const Movie = require('../models/movie');
 
 // Ошибки
@@ -15,6 +13,8 @@ module.exports.getMovies = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         throw new BadRequest(errorMessage.incorrectFilmInfo);
+      } else {
+        throw err;
       }
     })
     .catch(next);
@@ -57,6 +57,8 @@ module.exports.postMovie = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         throw new BadRequest(errorMessage.incorrectFilmInfo);
+      } else {
+        throw err;
       }
     })
     .catch(next);
@@ -82,6 +84,8 @@ module.exports.deleteMovie = (req, res, next) => {
         throw new NotFound(errorMessage.incorrectFilmId);
       } else if (err.name === 'CastError') {
         throw new BadRequest(errorMessage.incorrectFilmInfo);
+      } else {
+        throw err;
       }
     })
     .catch(next);
