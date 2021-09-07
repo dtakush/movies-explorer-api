@@ -83,8 +83,21 @@ module.exports.createUser = (req, res, next) => {
 // Вход
 module.exports.login = (req, res, next) => {
   const { email } = req.body;
-
   User.findOne({ email }).select('+password')
+    .then((user) => {
+      const token = jwt.sign(
+        { _id: user._id },
+        JWT_SECRET,
+        { expiresIn: '7d' },
+      );
+      return res.send({ token });
+    })
+    .catch(() => {
+      throw new Unauthorized('Неверный логин либо пароль');
+    })
+    .catch(next);
+
+  /* User.findOne({ email }).select('+password')
     .then((user) => {
       const token = jwt.sign(
         { _id: user._id },
@@ -102,7 +115,7 @@ module.exports.login = (req, res, next) => {
     .catch(() => {
       throw new Unauthorized(errorMessages.incorrectLogin);
     })
-    .catch(next);
+    .catch(next); */
 };
 
 // Выход из аккаунта
