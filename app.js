@@ -23,7 +23,7 @@ const midlewareErrors = require('./middlewares/error');
 const limiter = require('./utils/rateLimiter');
 
 const corsOptions = {
-  origin: 'https://dtakush.diploma.nomoredomains.monster',
+  origin: 'http://dtakush.diploma.nomoredomains.monster',
   credentials: true,
 };
 
