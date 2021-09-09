@@ -33,7 +33,7 @@ const movieValidation = celebrate({
       }
       return helpers.message('Поле thumbnail заполнено неверно');
     }),
-    movieId: Joi.hex().required(),
+    movieId: Joi.string().hex().max(24).required(),
     nameRU: Joi.string().required(),
     nameEN: Joi.string().required(),
   }),

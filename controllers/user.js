@@ -82,7 +82,9 @@ module.exports.createUser = (req, res, next) => {
 
 // Вход
 module.exports.login = (req, res, next) => {
-  const { email } = req.body;
+  // eslint-disable-next-line
+  const { email, password } = req.body;
+
   User.findOne({ email }).select('+password')
     .then((user) => {
       const token = jwt.sign(
@@ -96,31 +98,11 @@ module.exports.login = (req, res, next) => {
       throw new Unauthorized('Неверный логин либо пароль');
     })
     .catch(next);
-
-  /* User.findOne({ email }).select('+password')
-    .then((user) => {
-      const token = jwt.sign(
-        { _id: user._id },
-        JWT_SECRET,
-        { expiresIn: '7d' },
-      );
-      return res
-        .cookie('jwt', token, {
-          maxAge: 604800000,
-          httpOnly: true,
-          sameSite: true,
-        })
-        .send({ message: errorMessages.successfulLogin });
-    })
-    .catch(() => {
-      throw new Unauthorized(errorMessages.incorrectLogin);
-    })
-    .catch(next); */
 };
 
 // Выход из аккаунта
 // eslint-disable-next-line
-module.exports.signout = (req, res) => {
-  res.clearCookie('jwt', { httpOnly: true });
-  res.status(200).json({ message: 'OK' });
-};
+/* module.exports.signout = (req, res) => {
+  //res.clearCookie('jwt', { httpOnly: true });
+  //res.status(200).json({ message: 'OK' });
+}; */
