@@ -23,21 +23,10 @@ const midlewareErrors = require('./middlewares/error');
 const limiter = require('./utils/rateLimiter');
 
 const corsOptions = {
-  origin: ['http://localhost:3000',
-    'http://dtakush.diploma.nomoredomains.monster',
-    'https://dtakush.diploma.nomoredomains.monster'],
+  origin: 'http://dtakush.diploma.nomoredomains.monster',
   credentials: true,
-  optionsSuccessStatus: 204,
-  allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
 };
 
-function allowCors(req, res, next) {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-  next();
-}
-
-app.use(allowCors());
 app.use(helmet());
 app.use(cors(corsOptions));
 app.disable('x-powered-by');
@@ -49,6 +38,13 @@ mongoose.connect(MONGO_URL, {
   useCreateIndex: true,
   useFindAndModify: false,
   useUnifiedTopology: true,
+});
+
+app.use((req, res, next) => {
+  res.append('Access-Control-Allow-Origin', ['*']);
+  res.append('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+  res.append('Access-Control-Allow-Headers', 'Content-Type');
+  next();
 });
 
 // логгер запросов
