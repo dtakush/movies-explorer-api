@@ -28,7 +28,7 @@ const corsOptions = {
 };
 
 app.use(helmet());
-app.use(cors());
+app.use(cors(corsOptions));
 app.disable('x-powered-by');
 app.use(cookieParser());
 app.use(express.json());
