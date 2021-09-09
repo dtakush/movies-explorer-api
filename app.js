@@ -25,7 +25,6 @@ const limiter = require('./utils/rateLimiter');
 const corsOptions = {
   origin: '*',
   credentials: true,
-  optionsSuccessStatus: 204,
 };
 
 app.use(helmet());
