@@ -23,9 +23,12 @@ const midlewareErrors = require('./middlewares/error');
 const limiter = require('./utils/rateLimiter');
 
 const corsOptions = {
-  origin: '*',
+  origin: ['http://localhost:3000',
+    'http://dtakush.diploma.nomoredomains.monster',
+    'https://dtakush.diploma.nomoredomains.monster'],
   credentials: true,
   optionsSuccessStatus: 204,
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
 };
 
 app.use(helmet());
