@@ -8,22 +8,32 @@ const { errors } = require('celebrate');
 
 const {
   PORT = 3000,
-  MONGO_URL = 'mongodb://localhost:27017/bitfilmsdb',
+  // MONGO_URL = 'mongodb://localhost:27017/bitfilmsdb',
 } = process.env;
 
 const app = express();
 
-// Импорт роутов
-const routes = require('./routes/index');
+// Импорт ошибок
+const errorMessage = require('./utils/constants');
+const NotFound = require('./errors/NotFound');
+
+// Импорт контроллеров
+const { login, createUser } = require('./controllers/user');
 
 // Импорт мидлвар
+const { loginValidation, signupValidation } = require('./middlewares/validation');
+const auth = require('./middlewares/auth');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const midlewareErrors = require('./middlewares/error');
+
+// Импорт роутов
+const userRouter = require('./routes/user');
+const movieRouter = require('./routes/movie');
 
 const limiter = require('./utils/rateLimiter');
 
 const corsOptions = {
-  origin: '*',
+  origin: 'https://dtakush.diploma.nomoredomains.monster',
   credentials: true,
 };
 
@@ -33,7 +43,7 @@ app.disable('x-powered-by');
 app.use(cookieParser());
 app.use(express.json());
 
-mongoose.connect(MONGO_URL, {
+mongoose.connect('mongodb://localhost:27017/bitfilmsdb', {
   useNewUrlParser: true,
   useCreateIndex: true,
   useFindAndModify: false,
@@ -47,7 +57,17 @@ app.use(requestLogger);
 app.use(limiter);
 
 // Роуты
-app.use(routes);
+app.post('/signup', signupValidation, createUser);
+app.post('/signin', loginValidation, login);
+
+app.use(auth);
+
+app.use(userRouter);
+app.use(movieRouter);
+
+app.use(() => {
+  throw new NotFound(errorMessage.noUrl);
+});
 
 // логгер ошибок
 app.use(errorLogger);
