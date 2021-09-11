@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const helmet = require('helmet');
 const mongoose = require('mongoose');
-// const cors = require('cors');
+const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const { errors } = require('celebrate');
 
@@ -22,14 +22,23 @@ const midlewareErrors = require('./middlewares/error');
 
 const limiter = require('./utils/rateLimiter');
 
-/* const corsOptions = {
-  origin: 'https://dtakush.diploma.nomoredomains.monster',
+const allowedCors = [
+  'https://dtakush.diploma.nomoredomains.monster',
+  'https://dtakush.diploma.nomoredomains.monster/singup',
+  'https://dtakush.diploma.nomoredomains.monster/signin',
+  'http://dtakush.diploma.nomoredomains.monster',
+  'http://dtakush.diploma.nomoredomains.monster/singup',
+  'http://dtakush.diploma.nomoredomains.monster/signin',
+];
+
+const corsOptions = {
+  origin: allowedCors,
   credentials: true,
   optionsSuccessStatus: 204,
-}; */
+};
 
 app.use(helmet());
-// app.use(cors());
+app.use(cors(corsOptions));
 app.disable('x-powered-by');
 app.use(cookieParser());
 app.use(express.json());
