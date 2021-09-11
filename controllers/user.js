@@ -82,7 +82,8 @@ module.exports.createUser = (req, res, next) => {
 
 // Вход
 module.exports.login = (req, res, next) => {
-  const { email } = req.body;
+  // eslint-disable-next-line
+  const { email, password } = req.body;
 
   User.findOne({ email }).select('+password')
     .then((user) => {
@@ -91,16 +92,10 @@ module.exports.login = (req, res, next) => {
         JWT_SECRET,
         { expiresIn: '7d' },
       );
-      return res
-        .cookie('jwt', token, {
-          maxAge: 604800000,
-          httpOnly: true,
-          sameSite: true,
-        })
-        .send({ message: errorMessages.successfulLogin });
+      return res.send({ token });
     })
     .catch(() => {
-      throw new Unauthorized(errorMessages.incorrectLogin);
+      throw new Unauthorized('Неверный логин либо пароль');
     })
     .catch(next);
 };
