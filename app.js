@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const helmet = require('helmet');
 const mongoose = require('mongoose');
-const cors = require('cors');
+// const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const { errors } = require('celebrate');
 
@@ -28,8 +28,15 @@ const limiter = require('./utils/rateLimiter');
   optionsSuccessStatus: 204,
 }; */
 
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,POST,PUT');
+  res.header('Authorization', 'Access-Control-Allow-Headers', 'Origin', 'X-Requested-With', 'Content-Type', 'Accept');
+  next();
+});
+
 app.use(helmet());
-app.use(cors());
+// app.use(cors());
 app.disable('x-powered-by');
 app.use(cookieParser());
 app.use(express.json());
