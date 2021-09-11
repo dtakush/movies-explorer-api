@@ -22,14 +22,14 @@ const midlewareErrors = require('./middlewares/error');
 
 const limiter = require('./utils/rateLimiter');
 
-const corsOptions = {
+/* const corsOptions = {
   origin: 'https://dtakush.diploma.nomoredomains.monster',
   credentials: true,
   optionsSuccessStatus: 204,
-};
+}; */
 
 app.use(helmet());
-app.use(cors(corsOptions));
+app.use(cors());
 app.disable('x-powered-by');
 app.use(cookieParser());
 app.use(express.json());
