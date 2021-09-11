@@ -9,7 +9,7 @@ const { login, createUser, signout } = require('../controllers/user');
 
 // Импорт мидлвар
 const { loginValidation, signupValidation } = require('../middlewares/validation');
-// const auth = require('../middlewares/auth');
+const auth = require('../middlewares/auth');
 
 // Импорт роутов
 const userRouter = require('./user');
@@ -19,7 +19,7 @@ const movieRouter = require('./movie');
 router.post('/signup', signupValidation, createUser);
 router.post('/signin', loginValidation, login);
 
-// router.use(auth);
+router.use(auth);
 
 router.post('/signout', signout);
 router.use(userRouter);
