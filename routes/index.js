@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const cors = require('cors');
 
 // Импорт ошибок
 const errorMessage = require('../utils/constants');
@@ -14,6 +15,13 @@ const auth = require('../middlewares/auth');
 // Импорт роутов
 const userRouter = require('./user');
 const movieRouter = require('./movie');
+
+const corsOptions = {
+  origin: 'https://dtakush.diploma.nomoredomains.monster',
+  credentials: true,
+  optionsSuccessStatus: 204,
+};
+router.use(cors(corsOptions));
 
 // Роуты
 router.post('/signup', signupValidation, createUser);
