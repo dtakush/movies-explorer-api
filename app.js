@@ -22,17 +22,15 @@ const midlewareErrors = require('./middlewares/error');
 
 const limiter = require('./utils/rateLimiter');
 
-const allowedCors = [
-  'https://dtakush.diploma.nomoredomains.monster',
-  'https://dtakush.diploma.nomoredomains.monster/singup',
-  'https://dtakush.diploma.nomoredomains.monster/signin',
-  'http://dtakush.diploma.nomoredomains.monster',
-  'http://dtakush.diploma.nomoredomains.monster/singup',
-  'http://dtakush.diploma.nomoredomains.monster/signin',
-];
-
 const corsOptions = {
-  origin: allowedCors,
+  origin: [
+    'https://dtakush.diploma.nomoredomains.monster',
+    'https://dtakush.diploma.nomoredomains.monster/singup',
+    'https://dtakush.diploma.nomoredomains.monster/signin',
+    'http://dtakush.diploma.nomoredomains.monster',
+    'http://dtakush.diploma.nomoredomains.monster/singup',
+    'http://dtakush.diploma.nomoredomains.monster/signin',
+  ],
   credentials: true,
   optionsSuccessStatus: 204,
 };
