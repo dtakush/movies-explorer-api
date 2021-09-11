@@ -25,11 +25,7 @@ const limiter = require('./utils/rateLimiter');
 const corsOptions = {
   origin: [
     'https://dtakush.diploma.nomoredomains.monster',
-    'https://dtakush.diploma.nomoredomains.monster/singup',
-    'https://dtakush.diploma.nomoredomains.monster/signin',
     'http://dtakush.diploma.nomoredomains.monster',
-    'http://dtakush.diploma.nomoredomains.monster/singup',
-    'http://dtakush.diploma.nomoredomains.monster/signin',
   ],
   credentials: true,
   optionsSuccessStatus: 204,
