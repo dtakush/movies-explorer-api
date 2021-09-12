@@ -14,20 +14,8 @@ const {
 
 const app = express();
 
-// Импорт ошибок
-const errorMessage = require('./utils/constants');
-const NotFound = require('./errors/NotFound');
-
-// Импорт контроллеров
-const { login, createUser, signout } = require('./controllers/user');
-
-// Импорт мидлвар
-const { loginValidation, signupValidation } = require('./middlewares/validation');
-const auth = require('./middlewares/auth');
-
 // Импорт роутов
-const userRouter = require('./routes/user');
-const movieRouter = require('./routes/movie');
+const routes = require('./routes/index');
 
 // Импорт мидлвар
 const { requestLogger, errorLogger } = require('./middlewares/logger');
@@ -37,11 +25,11 @@ const limiter = require('./utils/rateLimiter');
 
 const corsOptions = {
   origin: [
-    'http://localhost:3001',
+    'http://localhost:3000',
     'https://dtakush.diploma.nomoredomains.monster',
     'http://dtakush.diploma.nomoredomains.monster',
   ],
-  methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
+  methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
   preflightContinue: false,
   optionsSuccessStatus: 204,
   allowedHeaders: ['Content-Type', 'origin', 'Authorization', 'Accept'],
@@ -69,18 +57,7 @@ app.use(requestLogger);
 app.use(limiter);
 
 // Роуты
-app.post('/signup', cors(corsOptions), signupValidation, createUser);
-app.post('/signin', cors(corsOptions), loginValidation, login);
-
-app.use(auth);
-
-app.post('/signout', signout);
-app.use(userRouter);
-app.use(movieRouter);
-
-app.use(() => {
-  throw new NotFound(errorMessage.noUrl);
-});
+app.use(routes);
 
 // логгер ошибок
 app.use(errorLogger);
