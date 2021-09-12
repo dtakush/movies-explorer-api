@@ -23,8 +23,14 @@ const midlewareErrors = require('./middlewares/error');
 
 const limiter = require('./utils/rateLimiter');
 
+const allowedCors = [
+  'http://localhost:3000',
+  'https://dtakush.diploma.nomoredomains.monster',
+  'http://dtakush.diploma.nomoredomains.monster',
+];
+
 const corsOptions = {
-  origin: '*',
+  origin: allowedCors,
   // methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
   // preflightContinue: false,
   optionsSuccessStatus: 204,
