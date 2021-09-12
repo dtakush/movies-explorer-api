@@ -2,10 +2,10 @@ require('dotenv').config();
 const express = require('express');
 const helmet = require('helmet');
 const mongoose = require('mongoose');
-// const cors = require('cors');
+const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const { errors } = require('celebrate');
-const cors = require('./middlewares/cors');
+// const cors = require('./middlewares/cors');
 
 const {
   PORT = 3000,
@@ -14,8 +14,20 @@ const {
 
 const app = express();
 
+// Импорт ошибок
+const errorMessage = require('./utils/constants');
+const NotFound = require('./errors/NotFound');
+
+// Импорт контроллеров
+const { login, createUser, signout } = require('./controllers/user');
+
+// Импорт мидлвар
+const { loginValidation, signupValidation } = require('./middlewares/validation');
+const auth = require('./middlewares/auth');
+
 // Импорт роутов
-const routes = require('./routes/index');
+const userRouter = require('./routes/user');
+const movieRouter = require('./routes/movie');
 
 // Импорт мидлвар
 const { requestLogger, errorLogger } = require('./middlewares/logger');
@@ -23,7 +35,7 @@ const midlewareErrors = require('./middlewares/error');
 
 const limiter = require('./utils/rateLimiter');
 
-/* const corsOptions = {
+const corsOptions = {
   origin: [
     'http://localhost:3001',
     'https://dtakush.diploma.nomoredomains.monster',
@@ -34,11 +46,11 @@ const limiter = require('./utils/rateLimiter');
   optionsSuccessStatus: 204,
   allowedHeaders: ['Content-Type', 'origin', 'Authorization', 'Accept'],
   credentials: true,
-}; */
+};
 
-app.use(cors);
+// app.use(cors);
 app.use(helmet());
-// app.use('*', cors(corsOptions));
+app.use('*', cors(corsOptions));
 app.disable('x-powered-by');
 app.use(cookieParser());
 app.use(express.json());
@@ -57,7 +69,18 @@ app.use(requestLogger);
 app.use(limiter);
 
 // Роуты
-app.use(routes);
+app.post('/signup', cors(corsOptions), signupValidation, createUser);
+app.post('/signin', cors(corsOptions), loginValidation, login);
+
+app.use(auth);
+
+app.post('/signout', signout);
+app.use(userRouter);
+app.use(movieRouter);
+
+app.use(() => {
+  throw new NotFound(errorMessage.noUrl);
+});
 
 // логгер ошибок
 app.use(errorLogger);
