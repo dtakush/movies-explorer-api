@@ -24,15 +24,19 @@ const limiter = require('./utils/rateLimiter');
 
 const corsOptions = {
   origin: [
+    'http://localhost:3001',
     'https://dtakush.diploma.nomoredomains.monster',
     'http://dtakush.diploma.nomoredomains.monster',
   ],
-  credentials: true,
+  methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
+  preflightContinue: false,
   optionsSuccessStatus: 204,
+  allowedHeaders: ['Content-Type', 'origin', 'Authorization', 'Accept'],
+  credentials: true,
 };
 
 app.use(helmet());
-app.use(cors(corsOptions));
+app.use('*', cors(corsOptions));
 app.disable('x-powered-by');
 app.use(cookieParser());
 app.use(express.json());
