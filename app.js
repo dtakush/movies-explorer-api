@@ -2,9 +2,10 @@ require('dotenv').config();
 const express = require('express');
 const helmet = require('helmet');
 const mongoose = require('mongoose');
-const cors = require('cors');
+// const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const { errors } = require('celebrate');
+const cors = require('./middlewares/cors');
 
 const {
   PORT = 3000,
@@ -22,7 +23,7 @@ const midlewareErrors = require('./middlewares/error');
 
 const limiter = require('./utils/rateLimiter');
 
-const corsOptions = {
+/* const corsOptions = {
   origin: [
     'http://localhost:3001',
     'https://dtakush.diploma.nomoredomains.monster',
@@ -33,10 +34,11 @@ const corsOptions = {
   optionsSuccessStatus: 204,
   allowedHeaders: ['Content-Type', 'origin', 'Authorization', 'Accept'],
   credentials: true,
-};
+}; */
 
+app.use(cors);
 app.use(helmet());
-app.use('*', cors(corsOptions));
+// app.use('*', cors(corsOptions));
 app.disable('x-powered-by');
 app.use(cookieParser());
 app.use(express.json());
