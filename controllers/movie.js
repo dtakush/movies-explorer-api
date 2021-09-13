@@ -23,7 +23,7 @@ module.exports.getMovies = (req, res, next) => {
 // Создание фильма
 module.exports.postMovie = (req, res, next) => {
   // console.log(req.user);
-  const {
+  /* const {
     country,
     director,
     duration,
@@ -37,22 +37,9 @@ module.exports.postMovie = (req, res, next) => {
     movieId,
   } = req.body;
 
-  const owner = req.user._id;
+  const owner = req.user._id; */
 
-  Movie.create({
-    country,
-    director,
-    duration,
-    year,
-    description,
-    image,
-    trailer,
-    nameRU,
-    nameEN,
-    thumbnail,
-    movieId,
-    owner,
-  })
+  Movie.create({ owner: req.user._id, ...req.body })
     .then((movie) => {
       res.send(movie);
     })
