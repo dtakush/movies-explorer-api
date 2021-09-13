@@ -31,7 +31,7 @@ const allowedCors = [
 
 const corsOptions = {
   origin: allowedCors,
-  // methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+  methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
   // preflightContinue: false,
   optionsSuccessStatus: 204,
   // allowedHeaders: ['Content-Type', 'origin', 'Authorization', 'Accept'],

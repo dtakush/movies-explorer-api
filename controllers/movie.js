@@ -54,7 +54,6 @@ module.exports.postMovie = (req, res, next) => {
     owner,
   })
     .then((movie) => {
-      console.log(movie);
       res.send(movie);
     })
     .catch((err) => {
