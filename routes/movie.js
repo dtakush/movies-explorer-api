@@ -9,9 +9,9 @@ const { getMovies, postMovie, deleteMovie } = require('../controllers/movie');
 
 const corsOptions = {
   origin: [
-    'http://localhost:3000',
-    'https://dtakush.diploma.nomoredomains.monster',
-    'http://dtakush.diploma.nomoredomains.monster',
+    'http://localhost:3000/movies',
+    'https://dtakush.diploma.nomoredomains.monster/movies',
+    'http://dtakush.diploma.nomoredomains.monster/movies',
   ],
   methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
   preflightContinue: false,
