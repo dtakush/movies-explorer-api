@@ -20,10 +20,9 @@ const NotFound = require('../errors/NotFound');
 
 // Импорт контроллеров
 const { login, createUser, signout } = require('../controllers/user');
-const { postMovie } = require('../controllers/movie');
 
 // Импорт мидлвар
-const { movieValidation, loginValidation, signupValidation } = require('../middlewares/validation');
+const { loginValidation, signupValidation } = require('../middlewares/validation');
 const auth = require('../middlewares/auth');
 
 // Импорт роутов
@@ -33,7 +32,6 @@ const movieRouter = require('./movie');
 // Роуты
 router.post('/signup', cors(corsOptions), signupValidation, createUser);
 router.post('/signin', cors(corsOptions), loginValidation, login);
-router.post('/movies', movieValidation, postMovie);
 
 router.use(auth);
 
