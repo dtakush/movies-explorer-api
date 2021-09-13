@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const cors = require('cors');
 
 // Валидация Celebrate
 const { movieValidation, movieIdValidation } = require('../middlewares/validation');
@@ -6,8 +7,21 @@ const { movieValidation, movieIdValidation } = require('../middlewares/validatio
 // Контроллеры
 const { getMovies, postMovie, deleteMovie } = require('../controllers/movie');
 
-router.get('/movies', getMovies);
-router.post('/movies', movieValidation, postMovie);
-router.delete('/movies/:movieId', movieIdValidation, deleteMovie);
+const corsOptions = {
+  origin: [
+    'http://localhost:3000',
+    'https://dtakush.diploma.nomoredomains.monster',
+    'http://dtakush.diploma.nomoredomains.monster',
+  ],
+  methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+  preflightContinue: false,
+  optionsSuccessStatus: 204,
+  allowedHeaders: ['Content-Type', 'origin', 'Authorization', 'Accept'],
+  credentials: true,
+};
+
+router.get('/movies', cors(corsOptions), getMovies);
+router.post('/movies', cors(corsOptions), movieValidation, postMovie);
+router.delete('/movies/:movieId', cors(corsOptions), movieIdValidation, deleteMovie);
 
 module.exports = router;

@@ -36,8 +36,8 @@ router.post('/signin', cors(corsOptions), loginValidation, login);
 router.use(auth);
 
 router.post('/signout', cors(corsOptions), signout);
-router.use(userRouter, cors(corsOptions));
-router.use(movieRouter, cors(corsOptions));
+router.use(userRouter);
+router.use(movieRouter);
 
 router.use(() => {
   throw new NotFound(errorMessage.noUrl);
