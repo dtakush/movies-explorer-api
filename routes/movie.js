@@ -2,7 +2,8 @@ const router = require('express').Router();
 const cors = require('cors');
 
 // Валидация Celebrate
-const { movieValidation, movieIdValidation } = require('../middlewares/validation');
+// const { movieValidation, movieIdValidation } = require('../middlewares/validation');
+const { movieIdValidation } = require('../middlewares/validation');
 
 // Контроллеры
 const { getMovies, postMovie, deleteMovie } = require('../controllers/movie');
@@ -21,7 +22,8 @@ const corsOptions = {
 };
 
 router.get('/movies', cors(corsOptions), getMovies);
-router.post('/movies', cors(corsOptions), movieValidation, postMovie);
+// router.post('/movies', cors(corsOptions), movieValidation, postMovie);
+router.post('/movies', cors(corsOptions), postMovie);
 router.delete('/movies/:movieId', cors(corsOptions), movieIdValidation, deleteMovie);
 
 module.exports = router;
