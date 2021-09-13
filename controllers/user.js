@@ -1,4 +1,4 @@
-const jwt = require('jsonwebtoken');
+const token = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 
@@ -87,12 +87,12 @@ module.exports.login = (req, res, next) => {
 
   User.findOne({ email }).select('+password')
     .then((user) => {
-      const token = jwt.sign(
+      const jwt = token.sign(
         { _id: user._id },
         JWT_SECRET,
         { expiresIn: '7d' },
       );
-      return res.send({ token });
+      return res.send({ jwt });
     })
     .catch(() => {
       throw new Unauthorized('Неверный логин либо пароль');

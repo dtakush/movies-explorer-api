@@ -53,7 +53,10 @@ module.exports.postMovie = (req, res, next) => {
     movieId,
     owner,
   })
-    .then((movie) => res.send(movie))
+    .then((movie) => {
+      console.log(movie);
+      res.send(movie);
+    })
     .catch((err) => {
       if (err.name === 'CastError') {
         throw new BadRequest(errorMessage.incorrectFilmInfo);
