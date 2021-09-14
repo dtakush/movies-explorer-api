@@ -62,12 +62,19 @@ module.exports.createUser = (req, res, next) => {
       email: req.body.email,
       password: hash,
     }))
-    .then((user) => res.status(200)
-      .send({
+    .then((user) => {
+      res.status(200).send({
         email: user.email,
         name: user.name,
         _id: user._id,
-      }))
+      });
+      const jwt = token.sign(
+        { _id: user._id },
+        JWT_SECRET,
+        { expiresIn: '7d' },
+      );
+      return res.send({ jwt });
+    })
     .catch((err) => {
       if (err.name === 'MongoError' && err.code === 11000) {
         throw new Conflict(errorMessages.existingEmail);
