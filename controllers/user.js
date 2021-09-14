@@ -63,17 +63,11 @@ module.exports.createUser = (req, res, next) => {
       password: hash,
     }))
     .then((user) => {
-      const jwt = token.sign(
-        { _id: user._id },
-        JWT_SECRET,
-        { expiresIn: '7d' },
-      );
-
       res.status(200).send({
         email: user.email,
         name: user.name,
+        password: user.password,
         _id: user._id,
-        token: jwt,
       });
     })
     .catch((err) => {
