@@ -57,10 +57,10 @@ module.exports.updateProfile = (req, res, next) => {
 // Создание пользователя
 module.exports.createUser = (req, res, next) => {
   bcrypt.hash(req.body.password, 10)
-    .then((hash) => User.create({
+    .then(() => User.create({
       name: req.body.name,
       email: req.body.email,
-      password: hash,
+      password: req.body.password,
     }))
     .then((user) => {
       res.status(200).send({
