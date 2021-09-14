@@ -1,5 +1,5 @@
 const token = require('jsonwebtoken');
-// const bcrypt = require('bcryptjs');
+const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 
 const { JWT_SECRET = 'super-strong-secret' } = process.env;
@@ -56,19 +56,18 @@ module.exports.updateProfile = (req, res, next) => {
 
 // Создание пользователя
 module.exports.createUser = (req, res, next) => {
-  User.create({
-    name: req.body.name,
-    email: req.body.email,
-    password: req.body.password,
-  })
-    .then((user) => {
-      res.status(200).send({
+  bcrypt.hash(req.body.password, 10)
+    .then((hash) => User.create({
+      name: req.body.name,
+      email: req.body.email,
+      password: hash,
+    }))
+    .then((user) => res.status(200)
+      .send({
         email: user.email,
         name: user.name,
-        password: user.password,
         _id: user._id,
-      });
-    })
+      }))
     .catch((err) => {
       if (err.name === 'MongoError' && err.code === 11000) {
         throw new Conflict(errorMessages.existingEmail);
